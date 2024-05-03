@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Component() {
-    const navigation = [{ name: "Contact", href: "mailto:pratik@shikha.ai" }];
     const handleButtonClick = (href: string) => {
         window.location.href = href;
     };
@@ -27,16 +26,6 @@ export default function Component() {
             </div> */}
 
                         <div className="hidden lg:flex lg:justify-end lg:gap-x-5">
-                            {navigation.map((item) => (
-                                <Button
-                                    onClick={() => handleButtonClick(item.href)}
-                                    variant={"outline"}
-                                    key={item.name}
-                                    className="flex self-center text-lg"
-                                >
-                                    {item.name}
-                                </Button>
-                            ))}
                             <a
                                 href="/login"
                                 className="rounded-md bg-black px-3.5 py-1 text-lg font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
