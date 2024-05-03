@@ -213,7 +213,7 @@ export default function DashboardComponent({ email }: { email: string }) {
                                 </SelectContent>
                             </Select>
 
-                            <Input placeholder="How are you feeling today?" />
+                            <Input ref={moodInputRef} placeholder="How are you feeling today?" />
                             <Button
                                 disabled={!mood || submittingMoodReport}
                                 onClick={submitMoodReport}

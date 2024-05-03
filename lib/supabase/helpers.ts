@@ -69,3 +69,36 @@ export async function addSelfMoodRecord(mood: string, mood_text: string) {
         return null;
     }
 }
+
+
+// route to fetch all mood records of a particular ratee (user)
+export async function getMoodRecords() {
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
+    try {
+
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
+        // if user is not logged in, return
+        if (!user) return;
+
+        const ratee = user.id;
+
+        let { data, error } = await supabase
+            .from("mood_swings")
+            .select("*")
+            .eq("ratee", ratee);
+
+        if (error) {
+            console.error("Error fetching data from status table:", error);
+            throw error;
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching data from status table:", error);
+        return null;
+    }
+}
