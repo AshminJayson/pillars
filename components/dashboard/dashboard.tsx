@@ -8,7 +8,7 @@ import { BentoCard, BentoGrid } from "@/components/bento-grid";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { addMoodRecord, getUsername } from "@/lib/supabase/helpers";
+import { addSelfMoodRecord, getUsername } from "@/lib/supabase/helpers";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -136,7 +136,8 @@ export default function DashboardComponent({ email }: { email: string }) {
     const submitMoodReport = () => {
         setSubmittingMoodReport(true);
         try {
-            addMoodRecord(mood, moodInputRef.current?.value as string);
+            addSelfMoodRecord(mood, moodInputRef.current?.value as string);
+            if (moodInputRef.current) moodInputRef.current!.value = "";
             toast.success("Mood report submitted successfully");
         } catch (error) {
             console.error("Error submitting mood report:", error);
