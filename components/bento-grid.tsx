@@ -47,7 +47,7 @@ const BentoCard = ({
         'pointer-events-none absolute bottom-0 flex w-full translate-y-10 flex-row items-center p-6 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100'
       )}>
       <Button
-        variant="darkGhost"
+        variant="default"
         asChild
         size="sm"
         className="pointer-events-auto">

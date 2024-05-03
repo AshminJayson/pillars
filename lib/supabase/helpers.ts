@@ -24,12 +24,35 @@ export async function getUsername(id: string) {
     }
 }
 
-export async function addMoodRecord(mood: string, mood_text: string) {
+export async function addSelfMoodRecord(mood: string, mood_text: string) {
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const moods = [
+        "Elated",
+        "Joyful",
+        "Serene",
+        "Happy",
+        "Neutral",
+        "Sad",
+        "Lonely",
+        "Scared",
+        "Depressed",
+    ];
+
+    const user_id = user.id;
     try {
-        let { data, error } = await supabase.from("mood").insert([
+        let { data, error } = await supabase.from("mood_swings").insert([
             {
+                ratee: user_id,
+                rater: user_id,
+                weight: 1,
+                mood_score: moods.length - moods.indexOf(mood) + 1,
                 mood: mood,
                 mood_text: mood_text,
             },
