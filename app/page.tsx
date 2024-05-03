@@ -1,11 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
+import Image from "next/image";
+import { Toaster } from "sonner";
 export default function Component() {
-    const handleButtonClick = (href: string) => {
-        window.location.href = href;
-    };
     return (
         <main className="flex min-h-screen w-full flex-col items-center justify-between">
             <div className="bg-white">
@@ -14,16 +11,16 @@ export default function Component() {
                         className="flex items-center justify-between p-6 lg:px-8"
                         aria-label="Global"
                     >
-                        {/* <div className="flex lg:flex-1">
-              <Image
-                unoptimized
-                alt="Logo"
-                src="/logo.png"
-                width={150}
-                height={25}
-                className="h-auto"
-              />
-            </div> */}
+                        <div className="flex lg:flex-1">
+                            <Image
+                                unoptimized
+                                alt="Logo"
+                                src="/pillars.png"
+                                width={150}
+                                height={25}
+                                className="h-auto"
+                            />
+                        </div>
 
                         <div className="hidden lg:flex lg:justify-end lg:gap-x-5">
                             <a
@@ -57,6 +54,7 @@ export default function Component() {
                                 Get Started
                             </button>
                         </Link> */}
+                        <Toaster richColors />
                     </div>
                 </div>
             </div>
