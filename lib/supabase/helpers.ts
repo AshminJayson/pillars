@@ -135,42 +135,165 @@ export async function addFriend(friendId: string, weight: number) {
   }
 }
 
+export async function fetchFriendRequests() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return null;
+  }
+
+  try {
+    let { data, error } = await supabase
+      .from("supports")
+      .select("*")
+      .eq("user_id2", user.id)
+      .eq("state", false);
+
+    if (error) {
+      console.error("Error fetching data from supports table:", error);
+      throw error;
+    }
+    let result_data = await Promise.all(
+      (data || []).map(async (item) => {
+        let { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("full_name")
+          .eq("id", item.user_id1);
+        if (userError || !userData) {
+          return null;
+        }
+        return {
+          id: item.id,
+          full_name: userData[0]?.full_name,
+        };
+      })
+    );
+
+    return result_data;
+  } catch (error) {
+    console.error("Error fetching data from supports table:", error);
+    return { data: [] };
+  }
+}
+
+export async function deleteFriendRequests(id: string) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+  // if (!user) {
+  //   return null;
+  // }
+
+  try {
+    let { data, error } = await supabase.from("supports").delete().eq("id", id);
+    if (error) {
+      console.error("Error deleting data from supports table:", error);
+      throw error;
+    }
+    return true;
+  } catch (error) {
+    console.error("Error deleting data from supports table:", error);
+    return false;
+  }
+}
+
+export async function makeFriend(id: string) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    let { data, error } = await supabase
+      .from("supports")
+      .update({ state: true })
+      .eq("id", id)
+      .select();
+    if (error) {
+      console.error("Error deleting data from supports table:", error);
+      throw error;
+    }
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 
 // route to fetch all mood records of a particular ratee (user)
 export async function getMoodRecords() {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-    try {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
+    // if user is not logged in, return
+    if (!user) return;
 
-        // if user is not logged in, return
-        if (!user) return;
+    const ratee = user.id;
 
-        const ratee = user.id;
+    let { data, error } = await supabase
+      .from("mood_swings")
+      .select("*")
+      .eq("ratee", ratee);
 
-        let { data, error } = await supabase
-            .from("mood_swings")
-            .select("*")
-            .eq("ratee", ratee)
-            .order("created_at", { ascending: false })
-
-        if (error) {
-            console.error("Error fetching data from status table:", error);
-            throw error;
-        }
-
-        return data;
-    } catch (error) {
-        console.error("Error fetching data from status table:", error);
-        return null;
+    if (error) {
+      console.error("Error fetching data from status table:", error);
+      throw error;
     }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching data from status table:", error);
+    return null;
+  }
 }
 
 
-function order(arg0: string, arg1: { ascending: boolean; }) {
-  throw new Error("Function not implemented.");
-}
+export async function fetchFriends() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return null;
+    }
+    let { data, error } = await supabase
+      .from("supports")
+      .select("*")
+      .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+      .eq("state", true);
+    if (error) {
+      console.error("Error fetching data from supports table:", error);
+      throw error;
+    }
 
+    let result_data = await Promise.all(
+      (data || []).map(async (item) => {
+        const otherUserId =
+          item.user_id1 === user.id ? item.user_id2 : item.user_id1;
+        let { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("full_name")
+          .eq("id", otherUserId);
+        if (userError || !userData) {
+          return null;
+        }
+        return {
+          id: item.id,
+          full_name: userData[0]?.full_name,
+        };
+      })
+    );
+    return result_data;
+  } catch (error) {
+    console.error("Error fetching data from supports table:", error);
+    return { data: [] };
+  }
+}
