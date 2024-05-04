@@ -29,7 +29,7 @@ export default async function SearchPage() {
               width={150}
               className="h-auto"
             />
-            <h1 className="text-3xl font-bold">Pillars</h1>
+            {/* <h1 className="text-3xl font-bold">Pillars</h1> */}
           </div>
           <div className="ml-auto flex h-full items-center space-x-4">
             <Usernav email={user?.email as string} />

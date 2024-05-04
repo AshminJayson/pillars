@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { getMoodRecords, getMoodRecordsForGraph } from "@/lib/supabase/helpers"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-
+import Plot from 'react-plotly.js';
 
 export default function Page() {
 
@@ -50,7 +50,8 @@ export default function Page() {
                 </tbody>
             </table>
 
-            <h1>Graph</h1>
+            <h3>Graph</h3>
+            <h4>Recharts</h4>
             <LineChart
                 width={600}
                 height={300}
@@ -64,6 +65,20 @@ export default function Page() {
                 <Legend />
                 <Line type="monotone" dataKey="mood_score" stroke="#8884d8" activeDot={{ r: 8 }} />
             </LineChart>
+
+            <h4>Plotly</h4>
+            <Plot
+                data={[
+                    {
+                        x: graph.map((item: any) => item.created_at),
+                        y: graph.map((item: any) => item.mood_score),
+                        type: 'scatter',
+                        mode: 'lines+points',
+                        marker: {color: '#8884d8'},
+                    },
+                ]}
+                layout={{width: 600, height: 300, title: 'Mood Score'}}
+            />
 
         </div>
     )
