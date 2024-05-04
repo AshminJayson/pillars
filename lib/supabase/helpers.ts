@@ -221,7 +221,6 @@ export async function makeFriend(id: string) {
   }
 }
 
-
 // route to fetch all mood records of a particular ratee (user)
 export async function getMoodRecords() {
   const cookieStore = cookies();
@@ -252,7 +251,6 @@ export async function getMoodRecords() {
     return null;
   }
 }
-
 
 export async function fetchFriends() {
   const cookieStore = cookies();
@@ -288,6 +286,7 @@ export async function fetchFriends() {
         return {
           id: item.id,
           full_name: userData[0]?.full_name,
+          user_id: otherUserId,
         };
       })
     );
@@ -295,5 +294,53 @@ export async function fetchFriends() {
   } catch (error) {
     console.error("Error fetching data from supports table:", error);
     return { data: [] };
+  }
+}
+
+export async function setFriendMoodrecord(
+  user_id: string,
+  mood: string,
+  mood_text: any
+) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const moods = [
+    "Elated",
+    "Joyful",
+    "Serene",
+    "Happy",
+    "Neutral",
+    "Sad",
+    "Lonely",
+    "Scared",
+    "Depressed",
+  ];
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return null;
+    }
+    let { data, error } = await supabase.from("mood_swings").insert([
+      {
+        ratee: user_id,
+        rater: user.id,
+        weight: 1,
+        mood_score: moods.length - moods.indexOf(mood) + 1,
+        mood: mood,
+        mood_text: mood_text,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error fetching data from status table:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error fetching data from status table:", error);
+    return null;
   }
 }
