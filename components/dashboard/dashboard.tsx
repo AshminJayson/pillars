@@ -74,7 +74,7 @@ const optionsList = [
         href: "/dashboard/stats",
         cta: (
             <p>
-                Open <span className="font-bold">Pillars of Support</span>
+                Open <span className="font-bold">Open my stats</span>
             </p>
         ),
         className: "col-span-2 row-span-2",
