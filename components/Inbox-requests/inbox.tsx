@@ -1,4 +1,4 @@
-"use client ";
+"use client";
 import * as React from "react";
 import {
   Sheet,
@@ -20,8 +20,54 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+
+import { fetchFriendRequests } from "@/lib/supabase/helpers";
+import { deleteFriendRequests } from "@/lib/supabase/helpers";
+import { makeFriend } from "@/lib/supabase/helpers";
+interface Requests {
+  id: string;
+  full_name: string;
+}
 
 export default function Inbox() {
+  const [requests, setRequests] = React.useState<Requests[] | null>(null);
+  const [istobeaccepted, setIstobeaccepted] = React.useState<boolean[]>([]);
+  const [reload, setReload] = React.useState<boolean>(false);
+  const requestDoing = async (key: number) => {
+    const check = istobeaccepted[key];
+    if (check && requests) {
+      const isUpdated = await makeFriend(requests[key].id);
+      if (isUpdated) {
+        console.log("updated");
+      } else {
+        console.log("not updated");
+      }
+    } else {
+      if (requests) {
+        console.log(requests[key].id);
+        const isdeleted = await deleteFriendRequests(requests[key].id);
+        if (isdeleted) {
+          console.log("deleted");
+        } else {
+          console.log("not deleted");
+        }
+      }
+    }
+    setReload(!reload);
+  };
+  React.useEffect(() => {
+    const fetchRequests = async () => {
+      const response = await fetchFriendRequests();
+      const requests: Requests[] = (response as Requests[]) || [];
+      setRequests(requests);
+      console.log(requests);
+      const tempistobeaccepted = requests.map(() => false);
+      setIstobeaccepted(tempistobeaccepted);
+    };
+    fetchRequests();
+  }, [reload]);
+
   return (
     <div className="p-4 hover:bg-slate-200 rounded-md">
       <Sheet>
@@ -45,12 +91,33 @@ export default function Inbox() {
           <SheetHeader>
             <SheetTitle>Pillar and Friend Request</SheetTitle>
             <SheetDescription>The Pillar request are here</SheetDescription>
-            <Card>
-              <CardHeader>
-                <CardTitle>Request from </CardTitle>
-              </CardHeader>
-              <CardContent></CardContent>
-            </Card>
+            {requests?.map((request, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle>{request.full_name} </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="pillarrequest">
+                        Accept Pillar Request
+                      </Label>
+                      <Switch
+                        id="pillarrequest"
+                        checked={istobeaccepted[index]}
+                        onCheckedChange={() => {
+                          const newIstobeaccepted = [...istobeaccepted];
+                          newIstobeaccepted[index] = !newIstobeaccepted[index];
+                          setIstobeaccepted(newIstobeaccepted);
+                          console.log(newIstobeaccepted);
+                        }}
+                      />
+                    </div>
+                    <Button onClick={() => requestDoing(index)}>Submit</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </SheetHeader>
         </SheetContent>
       </Sheet>
