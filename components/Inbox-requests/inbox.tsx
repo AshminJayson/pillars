@@ -10,6 +10,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export default function Inbox() {
   return (
@@ -35,6 +45,12 @@ export default function Inbox() {
           <SheetHeader>
             <SheetTitle>Pillar and Friend Request</SheetTitle>
             <SheetDescription>The Pillar request are here</SheetDescription>
+            <Card>
+              <CardHeader>
+                <CardTitle>Request from </CardTitle>
+              </CardHeader>
+              <CardContent></CardContent>
+            </Card>
           </SheetHeader>
         </SheetContent>
       </Sheet>
