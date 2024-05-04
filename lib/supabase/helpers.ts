@@ -135,7 +135,6 @@ export async function addFriend(friendId: string, weight: number) {
   }
 }
 
-
 export async function fetchFriendRequests() {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -224,67 +223,108 @@ export async function makeFriend(id: string) {
 
 // route to fetch all mood records of a particular ratee (user)
 export async function getMoodRecords() {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-    try {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
+    // if user is not logged in, return
+    if (!user) return;
 
-        // if user is not logged in, return
-        if (!user) return;
+    const ratee = user.id;
 
-        const ratee = user.id;
+    let { data, error } = await supabase
+      .from("mood_swings")
+      .select("*")
+      .eq("ratee", ratee);
 
-        let { data, error } = await supabase
-            .from("mood_swings")
-            .select("*")
-            .eq("ratee", ratee);
-
-        if (error) {
-            console.error("Error fetching data from status table:", error);
-            throw error;
-        }
-
-        return data;
-    } catch (error) {
-        console.error("Error fetching data from status table:", error);
-        return null;
+    if (error) {
+      console.error("Error fetching data from status table:", error);
+      throw error;
     }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching data from status table:", error);
+    return null;
+  }
 }
 
 // route to fetch all mood records of a particular ratee for past 7 days to create a graph
 export async function getMoodRecordsForGraph() {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-    try {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
+    // if user is not logged in, return
+    if (!user) return;
 
-        // if user is not logged in, return
-        if (!user) return;
+    const ratee = user.id;
 
-        const ratee = user.id;
+    let { data, error } = await supabase
+      .from("mood_swings")
+      .select("*")
+      .eq("ratee", ratee)
+      .order("created_at", { ascending: false })
+      .range(0, 7);
 
-        let { data, error } = await supabase
-            .from("mood_swings")
-            .select("*")
-            .eq("ratee", ratee)
-            .order("created_at", { ascending: false })
-            .range(0, 7);
-
-        if (error) {
-            console.error("Error fetching data from status table:", error);
-            throw error;
-        }
-
-        return data;
-    } catch (error) {
-        console.error("Error fetching data from status table:", error);
-        return null;
+    if (error) {
+      console.error("Error fetching data from status table:", error);
+      throw error;
     }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching data from status table:", error);
+    return null;
+  }
 }
 
+export async function fetchFriends() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return null;
+    }
+    let { data, error } = await supabase
+      .from("supports")
+      .select("*")
+      .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+      .eq("state", true);
+    if (error) {
+      console.error("Error fetching data from supports table:", error);
+      throw error;
+    }
+
+    let result_data = await Promise.all(
+      (data || []).map(async (item) => {
+        const otherUserId =
+          item.user_id1 === user.id ? item.user_id2 : item.user_id1;
+        let { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("full_name")
+          .eq("id", otherUserId);
+        if (userError || !userData) {
+          return null;
+        }
+        return {
+          id: item.id,
+          full_name: userData[0]?.full_name,
+        };
+      })
+    );
+    return result_data;
+  } catch (error) {
+    console.error("Error fetching data from supports table:", error);
+    return { data: [] };
+  }
+}
