@@ -221,6 +221,7 @@ export async function makeFriend(id: string) {
   }
 }
 
+
 // route to fetch all mood records of a particular ratee (user)
 export async function getMoodRecords() {
   const cookieStore = cookies();
@@ -252,38 +253,6 @@ export async function getMoodRecords() {
   }
 }
 
-// route to fetch all mood records of a particular ratee for past 7 days to create a graph
-export async function getMoodRecordsForGraph() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    // if user is not logged in, return
-    if (!user) return;
-
-    const ratee = user.id;
-
-    let { data, error } = await supabase
-      .from("mood_swings")
-      .select("*")
-      .eq("ratee", ratee)
-      .order("created_at", { ascending: false })
-      .range(0, 7);
-
-    if (error) {
-      console.error("Error fetching data from status table:", error);
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching data from status table:", error);
-    return null;
-  }
-}
 
 export async function fetchFriends() {
   const cookieStore = cookies();
