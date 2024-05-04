@@ -221,7 +221,6 @@ export async function makeFriend(id: string) {
   }
 }
 
-
 // route to fetch all mood records of a particular ratee (user)
 export async function getMoodRecords() {
   const cookieStore = cookies();
@@ -252,7 +251,6 @@ export async function getMoodRecords() {
     return null;
   }
 }
-
 
 export async function fetchFriends() {
   const cookieStore = cookies();
@@ -288,6 +286,7 @@ export async function fetchFriends() {
         return {
           id: item.id,
           full_name: userData[0]?.full_name,
+          user_id: otherUserId,
         };
       })
     );
