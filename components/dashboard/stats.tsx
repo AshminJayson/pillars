@@ -307,26 +307,27 @@ export function StatsComponent({ email }: { email: string }) {
                 <div>
                     {raters.length > 0 && z.length > 0 && (
                         <Plot
-                            data={[
-                                {
-                                    values: z.map(
-                                        (row: any) =>
-                                            row.filter(
-                                                (value: any) => value !== null
-                                            ).length
-                                    ),
-                                    labels: Object.values(raters),
-                                    type: "pie",
-                                    hovertemplate:
-                                        "%{label}: %{value} ratings<extra></extra>",
-                                },
-                            ]}
-                            layout={{
-                                width: 600,
-                                height: 300,
-                                title: "Ratings by Rater",
-                            }}
-                        />
+                        data={[
+                            {
+                                z: z,
+                                x: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday",],
+                                y: Object.keys(raters),
+                                type: "heatmap",
+                                hovertemplate: "Mood score: %{z}<extra></extra>",
+                                colorscale: [[0, "white"],[1, "green"]],
+                            },
+                        ]}
+                        layout={{ 
+                            width: 600, 
+                            height: 300, 
+                            title: "Mood Score Heatmap",
+                            yaxis: {
+                                tickmode: 'array',
+                                tickvals: Object.keys(raters),
+                                ticktext: Object.values(raters).map(fullName => fullName.split(' ')[0])
+                            }
+                        }}
+                    />
                     )}
                 </div>
             </div>
