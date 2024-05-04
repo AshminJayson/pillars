@@ -296,3 +296,51 @@ export async function fetchFriends() {
     return { data: [] };
   }
 }
+
+export async function setFriendMoodrecord(
+  user_id: string,
+  mood: string,
+  mood_text: any
+) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const moods = [
+    "Elated",
+    "Joyful",
+    "Serene",
+    "Happy",
+    "Neutral",
+    "Sad",
+    "Lonely",
+    "Scared",
+    "Depressed",
+  ];
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return null;
+    }
+    let { data, error } = await supabase.from("mood_swings").insert([
+      {
+        ratee: user_id,
+        rater: user.id,
+        weight: 1,
+        mood_score: moods.length - moods.indexOf(mood) + 1,
+        mood: mood,
+        mood_text: mood_text,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error fetching data from status table:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error fetching data from status table:", error);
+    return null;
+  }
+}
