@@ -161,9 +161,12 @@ export default function DashboardComponent({ email }: { email: string }) {
                             unoptimized
                             alt="Logo"
                             src="/pillars.png"
+                            onClick={() =>
+                                (window.location.href = "/dashboard")
+                            }
                             height={150}
                             width={150}
-                            className="h-auto"
+                            className="h-auto cursor-pointer"
                         />
                     </div>
                     <div className="ml-auto flex h-full items-center space-x-4">
