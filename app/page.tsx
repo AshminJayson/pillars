@@ -1,5 +1,6 @@
 "use client";
 
+import { ButtonWithLink } from "@/components/button";
 import Image from "next/image";
 import { Toaster } from "sonner";
 export default function Component() {
@@ -23,12 +24,7 @@ export default function Component() {
                         </div>
 
                         <div className="hidden lg:flex lg:justify-end lg:gap-x-5">
-                            <a
-                                href="/login"
-                                className="rounded-md bg-black px-3.5 py-1 text-lg font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                            >
-                                Log in
-                            </a>
+                            <ButtonWithLink text="Login" href="/login" />
                         </div>
                     </nav>
                 </header>

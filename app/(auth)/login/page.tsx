@@ -9,11 +9,7 @@ export const metadata = {
     title: "Log in",
 };
 
-export default async function LoginPage({
-    searchParams,
-}: {
-    searchParams?: { status?: string };
-}) {
+export default async function LoginPage() {
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
     const { data, error } = await supabase.auth.getUser();
@@ -22,11 +18,10 @@ export default async function LoginPage({
         return redirect("/dashboard");
     }
     return (
-        <div className="container grid h-screen w-screen items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+        <div className="container grid h-screen w-screen items-center justify-center lg:px-0">
             <div className="absolute right-4 top-4 scale-90 items-center justify-center px-3 py-2">
                 <ButtonWithLink text="Back" href="/" />
             </div>
-            <div className="hidden h-full rounded-3xl bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 lg:flex"></div>
             <div className="mt-5 md:mt-0 lg:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center sm:w-[500px]">
                     <div className="flex flex-col items-center justify-center">
