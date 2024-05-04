@@ -71,7 +71,7 @@ const mooods = [
 const optionsList = [
     {
         name: "What do my pillars think of my day today?",
-        href: "/supporters",
+        href: "/dashboard/stats",
         cta: (
             <p>
                 Open <span className="font-bold">Pillars of Support</span>
@@ -165,7 +165,6 @@ export default function DashboardComponent({ email }: { email: string }) {
                             width={150}
                             className="h-auto"
                         />
-                        <h1 className="text-3xl font-bold">Pillars</h1>
                     </div>
                     <div className="ml-auto flex h-full items-center space-x-4">
                         <UserNav email={email} />
@@ -213,7 +212,7 @@ export default function DashboardComponent({ email }: { email: string }) {
                                 </SelectContent>
                             </Select>
 
-                            <Input placeholder="How are you feeling today?" />
+                            <Input ref={moodInputRef} placeholder="How are you feeling today?" />
                             <Button
                                 disabled={!mood || submittingMoodReport}
                                 onClick={submitMoodReport}
