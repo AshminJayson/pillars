@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@material-ui/core/Button";
+import { Button } from "@/components/ui/button";
 import { getUsername } from "@/lib/supabase/helpers";
 import { useState, useEffect } from "react";
 import { getMoodRecords } from "@/lib/supabase/helpers";
@@ -255,24 +255,14 @@ export function StatsComponent({ email }: { email: string }) {
                             alignItems: "center",
                         }}
                     >
+                        <Button onClick={() => setInterval("day")}>Day</Button>
                         <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => setInterval("day")}
-                        >
-                            Day
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="primary"
                             onClick={() => setInterval("week")}
                             style={{ marginLeft: "10px" }}
                         >
                             Week
                         </Button>
                         <Button
-                            variant="contained"
-                            color="primary"
                             onClick={() => setInterval("month")}
                             style={{ marginLeft: "10px" }}
                         >
