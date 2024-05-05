@@ -344,3 +344,45 @@ export async function setFriendMoodrecord(
     return null;
   }
 }
+
+export async function depressionCal(id: string) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  try {
+    let { data, error } = await supabase
+      .from("mood_swings")
+      .select("*")
+      .eq("ratee", id);
+    if (error) {
+      console.error("Error fetching data from status table:", error);
+      throw error;
+    }
+    let sum = 0;
+    let flag = false;
+
+    if (data) {
+      for (let i = 0; i < data.length; i++) {
+        if (sum > 3) {
+          break;
+        }
+        if (data[i].mood_score < 5) {
+          sum += 1;
+        }
+        if (data[i].mood_score >= 5) {
+          sum = 0;
+        }
+      }
+      if (sum > 3) {
+        flag = true;
+      }
+    }
+    if (flag) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error fetching data from status table:", error);
+    return null;
+  }
+}

@@ -69,9 +69,11 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
 import { setFriendMoodrecord } from "@/lib/supabase/helpers";
+import { depressionCal } from "@/lib/supabase/helpers";
 
 export default function Pillars() {
   const [friends, setFriends] = React.useState([]);
+  const [depressionFriends, setDepressionFriends] = React.useState([]);
   const [name, setName] = React.useState<string>("");
   const [mood, setMood] = React.useState<string>("");
   const moodInputRef = React.useRef<HTMLInputElement | null>(null);
@@ -82,6 +84,14 @@ export default function Pillars() {
       const friendsData: any = await fetchFriends();
       console.log("fetching friends", friendsData);
       setFriends(friendsData);
+      let tempdepressionFriends = [];
+      friendsData.map(async (friend: any) => {
+        const check = await depressionCal(friend.user_id);
+        console.log("check", check);
+        tempdepressionFriends.push(check);
+      });
+      setDepressionFriends(tempdepressionFriends);
+      console.log("depressionFriends", tempdepressionFriends);
     };
     fetchFriendsData();
   }, []);
@@ -122,6 +132,21 @@ export default function Pillars() {
                         Hey what did you think about {request.full_name}&apos;s
                         mood today ?
                       </DialogTitle>
+                      {depressionFriends[index] && (
+                        <div>
+                          <p className="text-red-600 text-xl">
+                            Hey {request.full_name} is feeling low{" "}
+                          </p>
+                        </div>
+                      )}
+                      {!depressionFriends[index] && (
+                        <div>
+                          <p className="text-green-500 text-xl">
+                            Hey {request.full_name} is feeling Fine{" "}
+                          </p>
+                        </div>
+                      )}
+
                       <div className="flex gap-4 p-4 items-center justify-center  pt-10">
                         <Select onValueChange={(value) => setMood(value)}>
                           <SelectTrigger className="w-[180px]">
