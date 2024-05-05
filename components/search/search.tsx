@@ -80,7 +80,7 @@ export default function Search() {
                   <CommandItem
                     key={index}
                     value={user.full_name}
-                    className="w-16"
+                    className="w-full text-left"
                     onSelect={(currentValue) => {
                       console.log(currentValue);
                       setValue(currentValue === value ? "" : currentValue);
@@ -90,7 +90,7 @@ export default function Search() {
                   >
                     <Check
                       className={cn(
-                        "h-4 !w-16",
+                        "h-4 ",
                         value === user.full_name ? "opacity-100" : "opacity-0"
                       )}
                     />
