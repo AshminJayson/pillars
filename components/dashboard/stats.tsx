@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getUsername } from "@/lib/supabase/helpers";
 import { useState, useEffect } from "react";
 import { getMoodRecords } from "@/lib/supabase/helpers";
+import ReactWordcloud from 'react-wordcloud';
 import {
     LineChart,
     Line,
@@ -30,6 +31,7 @@ export function StatsComponent({ email }: { email: string }) {
     const [sortedGraph, setSortedGraph] = useState<any>([]);
     const [raters, setRaters] = useState<any>([]);
     const [z, setZ] = useState<any>([]);
+    const [wordCloudData, setWordCloudData] = useState<any>([]);
 
     // Custom tooltip component for Recharts
     const CustomTooltip = ({
@@ -129,7 +131,7 @@ export function StatsComponent({ email }: { email: string }) {
                         );
                     return scores.length > 0
                         ? scores.reduce((a: any, b: any) => a + b) /
-                              scores.length
+                                scores.length
                         : null;
                 });
             });
@@ -139,8 +141,20 @@ export function StatsComponent({ email }: { email: string }) {
             // console.log("z", tempz)
             setZ(tz);
 
-            // console.log("z", tz);
-            setZ(tz);
+            // Tokenize the sentences into words
+            const words = data.flatMap((record: any) => record.mood_text.split(' '));
+
+            // Prepare the words for the word cloud
+            const wordCounts = words.reduce((counts: any, word: string) => {
+                counts[word] = (counts[word] || 0) + 1;
+                return counts;
+            }, {});
+
+            const tempwordCloudData = Object.entries(wordCounts).map(([text, value]) => ({ text, value}));
+
+            setWordCloudData(tempwordCloudData);
+
+
         };
         fetchData();
 
@@ -165,7 +179,7 @@ export function StatsComponent({ email }: { email: string }) {
                 mood_score: meanBy(value, "mood_score"),
             })
         );
-
+        newAveragedData.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         setAveragedData(newAveragedData);
     }, [stats, interval]);
 
@@ -319,6 +333,13 @@ export function StatsComponent({ email }: { email: string }) {
                         }}
                     />
                     )}
+                </div>
+                <div style={{ boxShadow: '10px 10px 5px grey', width: '800px', height: '600px' }}>
+                    <ReactWordcloud words={wordCloudData} size={[800, 600]} options={{
+                        scale: 'log',
+                        fontSizes: [15, 80],
+                        }}
+                    />
                 </div>
             </div>
         </div>
