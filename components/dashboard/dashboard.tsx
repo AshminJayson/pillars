@@ -74,7 +74,7 @@ const optionsList = [
         href: "/dashboard/stats",
         cta: (
             <p>
-                Open <span className="font-bold">Open my stats</span>
+                Open <span className="font-bold">My Stats</span>
             </p>
         ),
         className: "col-span-2 row-span-2",
@@ -100,11 +100,11 @@ const optionsList = [
         ),
     },
     {
-        name: "What do my pillars think of my day today?",
-        href: "/supporters",
+        name: "Find Pillars for Support",
+        href: "/search",
         cta: (
             <p>
-                Open <span className="font-bold">Pillars of Support</span>
+                Open <span className="font-bold">Find Pillars</span>
             </p>
         ),
         className: "col-span-2 row-span-1",
